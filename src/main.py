@@ -18,21 +18,27 @@ class Main():
             reddit_data = json.load(f)
 
         reddit = praw.Reddit(
-            user_agent=reddit_data["user_agent"],
-            client_id=reddit_data["client_id"],
-            client_secret=reddit_data["client_secret"],
-            username=reddit_data["username"],
-            password=reddit_data["password"],
+            user_agent=reddit_data["api"]["user_agent"],
+            client_id=reddit_data["api"]["client_id"],
+            client_secret=reddit_data["api"]["client_secret"],
+            username=reddit_data["api"]["username"],
+            password=reddit_data["api"]["password"],
         )
 
         #sub_url = input("Enter submission url: ")
-        sub_url = "https://www.reddit.com/r/wallstreetbets/comments/nzjc6w/daily_discussion_thread_for_june_14_2021/?sort=new"
+        _SUB_URL = "https://www.reddit.com/r/wallstreetbets/comments/nzjc6w/daily_discussion_thread_for_june_14_2021/?sort=new"
         
-        scraper_reddit_db = Database(client=reddit_data["db_client"], database=reddit_data["db_database"], collection=reddit_data["db_collection"])
+        scraper_reddit_db = Database(
+            client=reddit_data["db"]["db_client"],
+            database=reddit_data["db"]["db_database"],
+            collection=reddit_data["db"]["db_collection"]
+        )
         Database.connect(scraper_reddit_db)
 
+        _NUM_COMMENTS = 100
+
         comment_scraper = Extract(reddit, scraper_reddit_db)
-        Extract.extractComments(comment_scraper, sub_url)
+        Extract.extractComments(comment_scraper, _SUB_URL, _NUM_COMMENTS)
 
         exit()
 
